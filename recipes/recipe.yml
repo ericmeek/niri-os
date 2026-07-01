@@ -3,6 +3,9 @@
 name: kam-os
 description: Eric's personal Fedora Atomic desktop
 
+labels:
+  org.opencontainers.image.source: "https://github.com/ericmeek/kam-os"
+
 base-image: ghcr.io/ublue-os/base-main
 image-version: 44
 
