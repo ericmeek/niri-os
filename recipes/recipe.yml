@@ -1,45 +1,145 @@
----
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
-name: niri-os
-# description will be included in the image's metadata
-description: This is my personal OS image.
 
-# the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+name: kam-os
+description: Eric's personal Fedora Atomic desktop
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
+base-image: ghcr.io/ublue-os/base-main
+image-version: 44
+
 modules:
+
+  #
+  # Copy configuration files
+  #
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
 
+  #
+  # RPM Packages
+  #
   - type: dnf
     repos:
       copr:
         - atim/starship
+
     install:
       packages:
-        - micro
+
+        #
+        # Login
+        #
+        - greetd
+        - tuigreet
+
+        #
+        # Wayland
+        #
+        - niri
+        - waybar
+        - alacritty
+        - wofi
+        - mako
+        - swaybg
+        - swayidle
+        - swaylock
+        - wl-clipboard
+        - grim
+        - slurp
+        - brightnessctl
+        - playerctl
+        - pavucontrol
+        - xdg-desktop-portal-gtk
+
+        #
+        # File Management
+        #
+        - ffmpegthumbnailer
+        - unar
+        - 7zip
+        - zstd
+        - plocate
+
+        #
+        # Containers
+        #
+        - podman
+        - podman-compose
+        - distrobox
+
+        #
+        # Terminal Utilities
+        #
+        - git
+        - vim
+        - emacs
+        - tmux
+        - eza
+        - fzf
+        - ripgrep
+        - fd-find
+        - jq
+        - tree
+        - unzip
+        - zip
+        - rsync
+        - curl
+        - wget
+        - fastfetch
+        - btop
+        - bat
+        - du-dust
+        - duf
+        - ncdu
+        - lsof
+        - strace
         - starship
+
+        #
+        # Networking
+        #
+        - NetworkManager-tui
+
+        #
+        # Bluetooth
+        #
+        - blueman
+
+        #
+        # Fonts
+        #
+        - jetbrains-mono-fonts
+        - fira-code-fonts
+        - google-noto-fonts-all
+        - fontawesome-fonts-all
+
     remove:
       packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
         - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - firefox-langpacks
 
+  #
+  # Flatpaks
+  #
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
+
+      - scope: system
+        notify: true
+        install:
           - org.mozilla.firefox
           - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+          - com.github.tchx84.Flatseal
+          - io.missioncenter.MissionCenter
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+      - scope: user
+
+  - type: systemd
+    system:
+      enabled:
+        - greetd.service
+        - podman.socket
+        - plocate-updatedb.timer
+
+  - type: signing
