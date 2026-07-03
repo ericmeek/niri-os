@@ -35,6 +35,7 @@ modules:
         #
         - greetd
         - tuigreet
+        - dbus-tools
 
         #
         # Wayland
@@ -42,7 +43,6 @@ modules:
         - niri
         - waybar
         - alacritty
-        - wofi
         - mako
         - swaybg
         - swayidle
@@ -121,6 +121,7 @@ modules:
       packages:
         - firefox
         - firefox-langpacks
+        - nano
 
   #
   # Flatpaks
